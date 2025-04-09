@@ -1,0 +1,21 @@
+{
+    "name": "wanabe_aws",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/app.js",
+    "scripts": {
+        "build": "tsc"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "packageManager": "pnpm@10.7.1",
+    "devDependencies": {
+        "@types/node": "^22.14.0"
+    },
+    "dependencies": {
+        "@prettier/sync": "^0.5.5",
+        "ajv": "^8.17.1",
+        "prettier": "^3.5.3"
+    }
+}
