@@ -62,7 +62,7 @@ export const getValidUnitConfigs = (params: GetValidUnitsListParams) => {
         if (unitConfig) {
             validUnitConfigs.push({
                 ...unitConfig,
-                cwd: _path,
+                cwd: unitPath,
             })
         }
     }
