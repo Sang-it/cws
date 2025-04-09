@@ -3,8 +3,16 @@ import prettier from "@prettier/sync";
 import { log } from "@/log";
 import { getValidUnitConfigs, writeFile } from "./core";
 import { validateConfig, createPM2Config, UNIT_CONFIG_FILE_NAME, ROOT_CONFIG_FILE_NAME } from "./config";
+import { execSync } from "node:child_process";
 
 const PM2Port = {
+    _reset_pm2: () => {
+        execSync("pm2 stop all")
+        execSync("pm2 del all")
+    },
+    _start_pm2: (filePath: string) => {
+        execSync(`pm2 start ${filePath}`)
+    },
     run: (rootPath: string) => {
         const validUnitsConfigs = getValidUnitConfigs({ log, rootPath, validateConfig, CONFIG_FILE_NAME: UNIT_CONFIG_FILE_NAME })
         const configContent = prettier.format(createPM2Config(validUnitsConfigs), { parser: "babel" })
@@ -12,10 +20,13 @@ const PM2Port = {
         writeFile({
             log,
             content: configContent,
-            path: path.join(rootPath, UNIT_CONFIG_FILE_NAME)
+            path: path.join(rootPath, ROOT_CONFIG_FILE_NAME)
         })
 
         log.log(`PM2 server config written to - ${path.join(rootPath, ROOT_CONFIG_FILE_NAME)}`)
+
+        PM2Port._reset_pm2()
+        PM2Port._start_pm2(path.join(rootPath, ROOT_CONFIG_FILE_NAME))
     }
 }
 
