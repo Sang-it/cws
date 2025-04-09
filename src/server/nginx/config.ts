@@ -1,7 +1,7 @@
 import Validator, { JSONSchemaType } from "ajv"
 
 export const UNIT_CONFIG_FILE_NAME = "ecosystem.config.js"
-export const ROOT_CONFIG_FILE_PATH = "/etc/nginx/ngix.conf"
+export const ROOT_CONFIG_FILE_PATH = "/etc/nginx/nginx.conf"
 
 export interface UnitConfig {
     name: string;
