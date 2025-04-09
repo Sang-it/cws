@@ -1,19 +1,22 @@
-import path from "node:path";
-import { log } from "./log";
-import { validateArgs } from "./args";
-import { getValidUnitConfigs, writeFile } from "./fs";
-import { validateConfig, getExecutableConfig, CONFIG_FILE_NAME } from "./config";
-import { DEFAULT_USAGE } from "./usage.js";
-import prettier from "@prettier/sync";
+import 'module-alias/register';
 
-const { unitsRoot } = validateArgs({ log, argv: process.argv, DEFAULT_USAGE });
-const validUnitsConfigs = getValidUnitConfigs({ log, unitsRoot, validateConfig, CONFIG_FILE_NAME })
-const configContent = prettier.format(getExecutableConfig(validUnitsConfigs), { parser: "babel" })
+import { log } from "./log"
+import { getOptions } from "./args";
+import { PM2Port } from './daemon/pm2';
+import { NginxPort } from './server/nginx';
 
-writeFile({
-    content: configContent,
-    path: path.join(unitsRoot, CONFIG_FILE_NAME)
-})
+const { rootPath, daemonManager, serverType } = getOptions(log)
 
-log.log(`Server config written to - ${path.join(unitsRoot, CONFIG_FILE_NAME)}`)
+switch (daemonManager) {
+    case "pm2": {
+        PM2Port.run(rootPath)
+        break;
+    }
+}
 
+switch (serverType) {
+    case "nginx": {
+        NginxPort.run(rootPath)
+        break;
+    }
+}

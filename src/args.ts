@@ -1,33 +1,44 @@
-import { Log } from "./log"
 import path from "node:path"
+import { Command, Option } from "@commander-js/extra-typings"
+import { Log } from "@/log"
 
-interface ExecutableConfig {
-    unitsRoot: string
-}
+const daemonOptions = ["pm2", "test"] as const
+const serverOptions = ["nginx"] as const
 
-const extractArgs = (argv: Array<string>): ExecutableConfig => {
-    return {
-        unitsRoot:
-            path.resolve(
-                argv[2]
+export const getOptions = (log: Log) => {
+    const program = new Command()
+        .name('node dist/app.js')
+        .description('CWS : Caldwell Web Services\nCLI to automate server setup.')
+        .version('0.0.1')
+        .addOption(
+            new Option(
+                '-R,--root-path <PATH>',
+                'path to the directory containing projects.'
             )
-    }
+                .argParser((rootDir) => path.resolve(rootDir))
+                .makeOptionMandatory()
+        )
+        .addOption(
+            new Option(
+                '-D,--daemon-manager [DAEMON_TYPE]',
+                'daemon to create the configs for.'
+            )
+                .default('pm2')
+                .choices(daemonOptions)
+        )
+        .addOption(
+            new Option(
+                '-S,--server-type [SERVER_TYPE]',
+                'server to create the configs for.'
+            )
+                .default('nginx')
+                .choices(serverOptions)
+        )
+        .configureOutput({
+            writeErr: (message) => log.error(message),
+        })
+
+    program.parse()
+
+    return program.opts()
 }
-
-interface ValidateArgsParameters {
-    log: Log
-    argv: Array<string>,
-    DEFAULT_USAGE: string,
-}
-
-export const validateArgs = (params: ValidateArgsParameters): ExecutableConfig => {
-    const { argv, log, DEFAULT_USAGE } = params
-
-    if (argv.length < 3 || argv[2] == "--help") {
-        log.log(DEFAULT_USAGE)
-        process.exit()
-    }
-
-    return extractArgs(argv)
-}
-

@@ -1,6 +1,7 @@
 import Validator, { JSONSchemaType } from "ajv"
 
-export const CONFIG_FILE_NAME = "ecosystem.config.js"
+export const UNIT_CONFIG_FILE_NAME = "ecosystem.config.js"
+export const ROOT_CONFIG_FILE_NAME = "root.config.js"
 
 export interface UnitConfig {
     name: string;
@@ -35,6 +36,6 @@ export interface UnitConfigWithCWD extends UnitConfig {
     cwd: string
 }
 
-export const getExecutableConfig = (validUnitConfigs: UnitConfigWithCWD[]) => {
+export const createPM2Config = (validUnitConfigs: UnitConfigWithCWD[]) => {
     return `module.exports = { apps : ${JSON.stringify(validUnitConfigs)} };`
 }
