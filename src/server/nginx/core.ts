@@ -69,15 +69,21 @@ export const getValidUnitConfigs = (params: GetValidUnitsListParams) => {
 
 interface WriteFileParams {
     content: string,
-    path: string
+    path: string,
+    log: Log
 }
 
 export const writeFile = (params: WriteFileParams) => {
-    const { content, path } = params
+    const { content, path, log } = params
 
-    if (fs.existsSync(path)) {
-        fs.rmSync(path)
+    try {
+        if (fs.existsSync(path)) {
+            fs.rmSync(path)
+        }
+
+        fs.writeFileSync(path, content)
     }
-
-    fs.writeFileSync(path, content)
+    catch (e) {
+        log.error_and_exit(e)
+    }
 }

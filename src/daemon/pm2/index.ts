@@ -10,6 +10,7 @@ const PM2Port = {
         const configContent = prettier.format(createPM2Config(validUnitsConfigs), { parser: "babel" })
 
         writeFile({
+            log,
             content: configContent,
             path: path.join(rootPath, UNIT_CONFIG_FILE_NAME)
         })
