@@ -34,6 +34,13 @@ export const getOptions = (log: Log) => {
                 .default('nginx')
                 .choices(serverOptions)
         )
+        .addOption(
+            new Option(
+                '-P,--nginx-root-location-port <PORT>',
+                'port for the root nginx location'
+            )
+                .default("3000")
+        )
         .configureOutput({
             writeErr: (message) => log.error(message),
         })

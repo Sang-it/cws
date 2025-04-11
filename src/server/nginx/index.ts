@@ -10,10 +10,10 @@ const NginxPort = {
     _restart_nginx: () => {
         execSync("systemctl restart nginx.service")
     },
-    run: (rootPath: string) => {
+    run: (rootPath: string, nginxRootLocationPort: string) => {
         const formatter = new Formatter()
         const validUnitsConfigs = getValidUnitConfigs({ log, rootPath, validateConfig, CONFIG_FILE_NAME: UNIT_CONFIG_FILE_NAME })
-        const configContent = formatter.parse(createNginxConfig(validUnitsConfigs))
+        const configContent = formatter.parse(createNginxConfig(validUnitsConfigs, nginxRootLocationPort))
 
         writeFile({
             log,

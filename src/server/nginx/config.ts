@@ -30,17 +30,6 @@ const validator = new Validator()
 export const validateConfig = validator.compile(schema)
 
 const createConfigLine = (config: UnitConfig) => {
-    if (config.name == "ROOT") {
-        return `
-            location / {
-                proxy_pass http://localhost:${config.env.PORT}/;
-                proxy_set_header Host $host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            }
-    `
-    }
-
     return `
         location /${config.name}/ {
             proxy_pass http://localhost:${config.env.PORT}/;
@@ -55,7 +44,7 @@ const createConfigLine = (config: UnitConfig) => {
     `
 }
 
-export const createNginxConfig = (validUnitConfigs: UnitConfig[]) => {
+export const createNginxConfig = (validUnitConfigs: UnitConfig[], nginxRootLocationPort: string) => {
     return `
         user nginx;
         worker_processes auto;
@@ -93,6 +82,13 @@ export const createNginxConfig = (validUnitConfigs: UnitConfig[]) => {
                 root         /usr/share/nginx/html;
 
                 include /etc/nginx/default.d/*.conf;
+
+                location / {
+                    proxy_pass http://localhost:${nginxRootLocationPort}/;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                }
 
                 ${validUnitConfigs.map(config => createConfigLine(config)).join("")}
 

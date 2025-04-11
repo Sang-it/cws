@@ -5,7 +5,7 @@ import { getOptions } from "./args";
 import { PM2Port } from './daemon/pm2';
 import { NginxPort } from './server/nginx';
 
-const { rootPath, daemonManager, serverType } = getOptions(log)
+const { rootPath, daemonManager, serverType, nginxRootLocationPort } = getOptions(log)
 
 switch (daemonManager) {
     case "pm2": {
@@ -16,7 +16,7 @@ switch (daemonManager) {
 
 switch (serverType) {
     case "nginx": {
-        NginxPort.run(rootPath)
+        NginxPort.run(rootPath, nginxRootLocationPort)
         break;
     }
 }
