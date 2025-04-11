@@ -8,7 +8,7 @@ import { execSync } from "node:child_process";
 
 const NginxPort = {
     _restart_nginx: () => {
-        execSync("systemctl restart nginx.service")
+        execSync("systemctl reload nginx.service")
     },
     run: (rootPath: string, nginxRootLocationPort: string) => {
         const formatter = new Formatter()
