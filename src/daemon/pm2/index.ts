@@ -6,31 +6,24 @@ import { validateConfig, createPM2Config, UNIT_CONFIG_FILE_NAME, ROOT_CONFIG_FIL
 import { execSync } from "node:child_process";
 
 const PM2Port = {
-    _reset_pm2: () => {
-        execSync(`pm2 jlist | jq -r '.[] | select(.name != "ROOT") | .pm_id' | xargs -n1 pm2 delete`)
-    },
-    _start_pm2: (filePath: string) => {
-        execSync(`
-             for app in $(pm2 jlist | jq -r '.[] | select(.pm2_env.status == "stopped") | .name'); do
-                pm2 start ${filePath} --only "$app"
-             done
-        `
-        )
+    _reset_pm2: (filePath: string) => {
+        execSync(`pm2 del ${filePath}`)
+        execSync(`pm2 start ${filePath}`)
     },
     run: (rootPath: string) => {
         const validUnitsConfigs = getValidUnitConfigs({ log, rootPath, validateConfig, CONFIG_FILE_NAME: UNIT_CONFIG_FILE_NAME })
         const configContent = prettier.format(createPM2Config(validUnitsConfigs), { parser: "babel" })
+        const ROOT_FILE_PATH = path.join(rootPath, ROOT_CONFIG_FILE_NAME)
 
         writeFile({
             log,
             content: configContent,
-            path: path.join(rootPath, ROOT_CONFIG_FILE_NAME)
+            path: ROOT_FILE_PATH
         })
 
-        log.log(`PM2 server config written to - ${path.join(rootPath, ROOT_CONFIG_FILE_NAME)}`)
+        log.log(`PM2 server config written to - ${ROOT_FILE_PATH}`)
 
-        PM2Port._reset_pm2()
-        PM2Port._start_pm2(path.join(rootPath, ROOT_CONFIG_FILE_NAME))
+        PM2Port._reset_pm2(ROOT_FILE_PATH)
     }
 }
 
