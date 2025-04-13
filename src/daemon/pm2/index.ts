@@ -7,7 +7,7 @@ import { execSync } from "node:child_process";
 
 const PM2Port = {
     _reset_pm2: (filePath: string) => {
-        execSync(`pm2 del ${filePath}`)
+        execSync(`pm2 del all`)
         execSync(`pm2 start ${filePath}`)
     },
     run: (rootPath: string) => {
